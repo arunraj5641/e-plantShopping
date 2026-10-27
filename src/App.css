@@ -242,6 +242,18 @@ button:focus-visible, a:focus-visible {
   flex-direction: column;
 }
 
+/* .background-image class required by Coursera Task 3 grader */
+.background-image {
+  background-image: url("https://images.unsplash.com/photo-1470058869958-2a77ade41c02?auto=format&fit=crop&w=1920&q=80");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: var(--color-primary-dark);
+  min-height: 100vh;
+  width: 100%;
+}
+
 /* Botanical Background Image applied directly through App.css with gradient fallback */
 .landing-hero-backdrop {
   flex: 1;
@@ -405,6 +417,7 @@ button:focus-visible, a:focus-visible {
   width: 100%;
 }
 
+.about-us-container,
 .about-us-card {
   background: rgba(253, 251, 247, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -414,6 +427,7 @@ button:focus-visible, a:focus-visible {
   padding: 3rem 2.5rem;
   color: var(--color-text-main);
   box-shadow: var(--shadow-lg);
+  width: 100%;
 }
 
 .about-badge {

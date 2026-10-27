@@ -11,7 +11,9 @@ export const cartSlice = createSlice({
     // Add item to cart or increment quantity if already present
     addToCart: (state, action) => {
       const plant = action.payload;
-      const existingItem = state.items.find((item) => item.id === plant.id);
+      const existingItem = state.items.find(
+        (item) => (plant.id && item.id === plant.id) || item.name === plant.name
+      );
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
@@ -25,7 +27,9 @@ export const cartSlice = createSlice({
     // Alias for Coursera rubric compatibility
     addItem: (state, action) => {
       const plant = action.payload;
-      const existingItem = state.items.find((item) => item.id === plant.id);
+      const existingItem = state.items.find(
+        (item) => (plant.id && item.id === plant.id) || item.name === plant.name
+      );
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
@@ -36,49 +40,65 @@ export const cartSlice = createSlice({
       }
     },
 
-    // Remove single item completely from cart
-    removeFromCart: (state, action) => {
-      const targetId = typeof action.payload === 'object' ? action.payload.id : action.payload;
-      state.items = state.items.filter((item) => item.id !== targetId);
+    // Remove single item completely from cart (supports payload as plant.name, plant.id, or object)
+    removeItem: (state, action) => {
+      const target = action.payload;
+      const name = typeof target === 'object' ? target?.name : target;
+      const id = typeof target === 'object' ? target?.id : target;
+      state.items = state.items.filter(
+        (item) => item.name !== name && item.id !== id
+      );
     },
 
     // Alias for Coursera rubric compatibility
-    removeItem: (state, action) => {
-      const targetId = typeof action.payload === 'object' ? action.payload.id : action.payload;
-      state.items = state.items.filter((item) => item.id !== targetId);
+    removeFromCart: (state, action) => {
+      const target = action.payload;
+      const name = typeof target === 'object' ? target?.name : target;
+      const id = typeof target === 'object' ? target?.id : target;
+      state.items = state.items.filter(
+        (item) => item.name !== name && item.id !== id
+      );
     },
 
     // Increment item quantity
     increaseQuantity: (state, action) => {
-      const targetId = typeof action.payload === 'object' ? action.payload.id : action.payload;
-      const item = state.items.find((i) => i.id === targetId || i.name === targetId);
+      const target = action.payload;
+      const name = typeof target === 'object' ? target?.name : target;
+      const id = typeof target === 'object' ? target?.id : target;
+      const item = state.items.find((i) => i.id === id || i.name === name);
       if (item) {
         item.quantity += 1;
       }
     },
 
-    // Decrement item quantity; if quantity is 1, decrementing removes the item cleanly
+    // Decrement item quantity; if quantity is 1 or reaches <=0, decrements or removes the item cleanly
     decreaseQuantity: (state, action) => {
-      const targetId = typeof action.payload === 'object' ? action.payload.id : action.payload;
-      const item = state.items.find((i) => i.id === targetId || i.name === targetId);
+      const target = action.payload;
+      const name = typeof target === 'object' ? target?.name : target;
+      const id = typeof target === 'object' ? target?.id : target;
+      const item = state.items.find((i) => i.id === id || i.name === name);
       if (item) {
         if (item.quantity > 1) {
           item.quantity -= 1;
         } else {
-          state.items = state.items.filter((i) => i.id !== item.id);
+          state.items = state.items.filter(
+            (i) => i.id !== item.id && i.name !== item.name
+          );
         }
       }
     },
 
-    // Update quantity directly (useful for numeric input or specific quantity updates)
+    // Update quantity directly (supports payload { name, quantity } and { id, quantity })
     updateQuantity: (state, action) => {
-      const { id, quantity, name } = action.payload;
-      const item = state.items.find((i) => (id && i.id === id) || (name && i.name === name));
-      if (item) {
+      const { id, name, quantity } = action.payload || {};
+      const itemToUpdate = state.items.find(
+        (item) => (name && item.name === name) || (id && item.id === id)
+      );
+      if (itemToUpdate) {
         if (quantity > 0) {
-          item.quantity = quantity;
+          itemToUpdate.quantity = quantity;
         } else {
-          state.items = state.items.filter((i) => i.id !== item.id);
+          state.items = state.items.filter((item) => item !== itemToUpdate);
         }
       }
     },
@@ -93,8 +113,8 @@ export const cartSlice = createSlice({
 export const {
   addToCart,
   addItem,
-  removeFromCart,
   removeItem,
+  removeFromCart,
   increaseQuantity,
   decreaseQuantity,
   updateQuantity,

@@ -1,21 +1,51 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectTotalQuantity } from '../CartSlice';
 
-const Navbar = () => {
+const Navbar = ({ onHomeClick, onPlantsClick, onCartClick }) => {
   const totalQuantity = useSelector(selectTotalQuantity);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isHomeActive = location.pathname === '/';
   const isPlantsActive = location.pathname === '/plants';
   const isCartActive = location.pathname === '/cart';
 
+  const handleHomeClick = (e) => {
+    if (onHomeClick) {
+      onHomeClick(e);
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handlePlantsClick = (e) => {
+    if (onPlantsClick) {
+      onPlantsClick(e);
+    } else {
+      navigate('/plants');
+    }
+  };
+
+  const handleCartClick = (e) => {
+    if (onCartClick) {
+      onCartClick(e);
+    } else {
+      navigate('/cart');
+    }
+  };
+
   return (
     <header className="navbar-container">
       <nav className="navbar" aria-label="Main Navigation">
         {/* Brand Logo and Name */}
-        <Link to="/" className="navbar-brand" aria-label="Paradise Nursery Home">
+        <Link
+          to="/"
+          className="navbar-brand"
+          onClick={handleHomeClick}
+          aria-label="Paradise Nursery Home"
+        >
           <div className="brand-icon-wrapper" aria-hidden="true">
             <svg
               className="brand-leaf-icon"
@@ -41,6 +71,7 @@ const Navbar = () => {
           <Link
             to="/"
             className={`nav-link ${isHomeActive ? 'active' : ''}`}
+            onClick={handleHomeClick}
             aria-current={isHomeActive ? 'page' : undefined}
           >
             Home
@@ -48,6 +79,7 @@ const Navbar = () => {
           <Link
             to="/plants"
             className={`nav-link ${isPlantsActive ? 'active' : ''}`}
+            onClick={handlePlantsClick}
             aria-current={isPlantsActive ? 'page' : undefined}
           >
             Plants
@@ -55,10 +87,11 @@ const Navbar = () => {
           <Link
             to="/cart"
             className={`nav-link nav-cart-btn ${isCartActive ? 'active' : ''}`}
+            onClick={handleCartClick}
             aria-label={`Shopping Cart with ${totalQuantity} items`}
             aria-current={isCartActive ? 'page' : undefined}
           >
-            <span className="cart-icon-wrapper" aria-hidden="true">
+            <span className="cart-icon-wrapper cart-icon" aria-hidden="true">
               <svg
                 className="cart-svg-icon"
                 viewBox="0 0 24 24"
@@ -74,7 +107,7 @@ const Navbar = () => {
               </svg>
             </span>
             <span className="cart-text">Cart</span>
-            <span className="cart-badge" aria-live="polite">
+            <span className="cart-badge cart-count" aria-live="polite">
               {totalQuantity}
             </span>
           </Link>

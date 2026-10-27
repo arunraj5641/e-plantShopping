@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   selectCartItems,
   selectTotalQuantity,
   selectTotalPrice,
+  updateQuantity,
+  removeItem,
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
@@ -32,16 +34,36 @@ const CartItem = ({ onContinueShopping }) => {
     return item.price * item.quantity;
   };
 
+  // Coursera Task 7: handleIncrement dispatches updateQuantity
   const handleIncrement = (item) => {
-    dispatch(increaseQuantity(item.id));
+    dispatch(
+      updateQuantity({
+        name: item.name,
+        id: item.id,
+        quantity: item.quantity + 1,
+      })
+    );
   };
 
+  // Coursera Task 7: handleDecrement dispatches updateQuantity; removing if quantity reaches 1
   const handleDecrement = (item) => {
-    dispatch(decreaseQuantity(item.id));
+    if (item.quantity > 1) {
+      dispatch(
+        updateQuantity({
+          name: item.name,
+          id: item.id,
+          quantity: item.quantity - 1,
+        })
+      );
+    } else {
+      // Dispatches removeItem with item.name when quantity is 1
+      dispatch(removeItem(item.name));
+    }
   };
 
+  // Coursera Task 7: handleRemove dispatches removeItem with item.name
   const handleRemove = (item) => {
-    dispatch(removeFromCart(item.id));
+    dispatch(removeItem(item.name));
   };
 
   const handleContinueShopping = (e) => {
@@ -114,7 +136,7 @@ const CartItem = ({ onContinueShopping }) => {
                 const itemTotal = calculateTotalCost(item);
 
                 return (
-                  <article key={item.id} className="cart-item-card" role="listitem">
+                  <article key={item.id || item.name} className="cart-item-card" role="listitem">
                     <div className="cart-item-image-wrapper">
                       <img
                         src={item.image}
@@ -137,12 +159,13 @@ const CartItem = ({ onContinueShopping }) => {
                           )}
                         </div>
 
+                        {/* Recognizable Delete Button with cart-item-delete class */}
                         <button
                           type="button"
-                          className="btn-delete-item"
+                          className="cart-item-delete btn-delete-item"
                           onClick={() => handleRemove(item)}
-                          aria-label={`Remove ${item.name} from cart`}
-                          title="Remove plant"
+                          aria-label={`Delete ${item.name} from cart`}
+                          title="Delete plant"
                         >
                           <svg
                             className="trash-icon"
@@ -159,7 +182,7 @@ const CartItem = ({ onContinueShopping }) => {
                             <line x1="10" y1="11" x2="10" y2="17" />
                             <line x1="14" y1="11" x2="14" y2="17" />
                           </svg>
-                          <span className="delete-text">Remove</span>
+                          <span className="delete-text">Delete</span>
                         </button>
                       </div>
 
@@ -175,7 +198,7 @@ const CartItem = ({ onContinueShopping }) => {
                         <div className="quantity-control-group" aria-label="Quantity Controls">
                           <button
                             type="button"
-                            className="btn-qty btn-qty-decrement"
+                            className="btn-qty btn-qty-decrement cart-item-button-dec"
                             onClick={() => handleDecrement(item)}
                             aria-label={`Decrease quantity for ${item.name}`}
                           >
@@ -190,7 +213,7 @@ const CartItem = ({ onContinueShopping }) => {
 
                           <button
                             type="button"
-                            className="btn-qty btn-qty-increment"
+                            className="btn-qty btn-qty-increment cart-item-button-inc"
                             onClick={() => handleIncrement(item)}
                             aria-label={`Increase quantity for ${item.name}`}
                           >

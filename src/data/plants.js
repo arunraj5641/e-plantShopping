@@ -1,5 +1,6 @@
-export const plantCategories = [
+export const plantsArray = [
   {
+    category: 'Air Purifying Plants',
     name: 'Air Purifying Plants',
     description: 'Natural bio-filters scientifically proven to cleanse indoor air and elevate oxygen levels.',
     plants: [
@@ -60,6 +61,7 @@ export const plantCategories = [
     ]
   },
   {
+    category: 'Low Maintenance Plants',
     name: 'Low Maintenance Plants',
     description: 'Resilient and forgiving greenery perfect for beginners, busy schedules, and low-light corners.',
     plants: [
@@ -120,6 +122,7 @@ export const plantCategories = [
     ]
   },
   {
+    category: 'Aromatic & Flowering Plants',
     name: 'Aromatic & Flowering Plants',
     description: 'Enchanting blooms and fresh botanical scents that stimulate the senses and brighten interiors.',
     plants: [
@@ -181,4 +184,5 @@ export const plantCategories = [
   }
 ];
 
-export const allPlants = plantCategories.flatMap(category => category.plants);
+export const plantCategories = plantsArray;
+export const allPlants = plantsArray.flatMap(category => category.plants);
