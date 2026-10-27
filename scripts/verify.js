@@ -39,10 +39,12 @@ for (const file of requiredFiles) {
   assert(fs.existsSync(fullPath), `Required file exists: ${file}`);
 }
 
-// 2. FIX 1: Verify AboutUs.jsx has about-us-container
-console.log('\n--- Checking FIX 1: AboutUs.jsx Container ---');
+// 2. FIX 1: Verify AboutUs.jsx has about-us-container, Paradise Nursery identity & mission
+console.log('\n--- Checking FIX 1: AboutUs.jsx Content & Evidence ---');
 const aboutUsContent = fs.readFileSync(path.join(projectRoot, 'src/AboutUs.jsx'), 'utf-8');
 assert(aboutUsContent.includes('className="about-us-container"') || aboutUsContent.includes("className='about-us-container'"), 'AboutUs.jsx includes <div className="about-us-container">');
+assert(aboutUsContent.includes('Paradise Nursery'), 'AboutUs.jsx clearly identifies Paradise Nursery');
+assert(aboutUsContent.includes('mission') || aboutUsContent.includes('Mission'), 'AboutUs.jsx describes company mission');
 assert(aboutUsContent.includes('export default AboutUs'), 'AboutUs.jsx has default export');
 
 // 3. FIX 2: Verify App.css has .background-image with url() and supporting properties
@@ -54,7 +56,7 @@ assert(appCss.includes('background-size: cover'), 'App.css includes background-s
 assert(appCss.includes('background-position: center'), 'App.css includes background-position: center');
 assert(appCss.includes('background-repeat: no-repeat'), 'App.css includes background-repeat: no-repeat');
 assert(appCss.includes('min-height: 100vh'), 'App.css includes min-height: 100vh');
-assert(appCss.includes('background-color: var(--color-primary-dark)') || appCss.includes('background-color: #'), 'App.css defines fallback background color');
+assert(appCss.includes('background-color: #12281e') || appCss.includes('background-color: #'), 'App.css defines explicit fallback background color');
 
 // 4. FIX 3 & FIX 4: Verify App.jsx heading and handleGetStartedClick
 console.log('\n--- Checking FIX 3 & FIX 4: App.jsx Heading & Get Started ---');
@@ -66,14 +68,26 @@ assert(appJsx.includes('handleGetStartedClick'), 'App.jsx implements handleGetSt
 assert(appJsx.includes('onClick={handleGetStartedClick}'), 'App.jsx wires button directly with onClick={handleGetStartedClick}');
 assert(appJsx.includes('background-image'), 'App.jsx applies .background-image class to landing page element');
 
-// 5. FIX 5: Verify plantsArray in plants.js and ProductList.jsx
-console.log('\n--- Checking FIX 5: plantsArray Data Structure & ProductList Section ---');
-const { plantsArray, allPlants } = await import('../src/data/plants.js');
+// 5. FIX 5: Verify plantsArray defined DIRECTLY in ProductList.jsx
+console.log('\n--- Checking FIX 5: plantsArray Defined in ProductList.jsx ---');
+const productListContent = fs.readFileSync(path.join(projectRoot, 'src/ProductList.jsx'), 'utf-8');
+assert(productListContent.includes('export const plantsArray = [') || productListContent.includes('const plantsArray = ['), 'ProductList.jsx contains the actual definition of plantsArray directly in the file');
+
+const plantsArrayStart = productListContent.indexOf('export const plantsArray = [');
+const plantsArrayEnd = productListContent.indexOf('export const Navbar =');
+const plantsArrayBlock = productListContent.substring(plantsArrayStart, plantsArrayEnd);
+const tempPlantsPath = path.join(projectRoot, 'scripts/_tempPlants.mjs');
+fs.writeFileSync(tempPlantsPath, plantsArrayBlock, 'utf-8');
+
+const { plantsArray, allPlants } = await import('./_tempPlants.mjs');
+if (fs.existsSync(tempPlantsPath)) fs.unlinkSync(tempPlantsPath);
+
 assert(Array.isArray(plantsArray), 'plantsArray is defined and is an Array');
 assert(plantsArray.length >= 3, `plantsArray contains at least 3 categories (Found: ${plantsArray.length})`);
 
 let min6PerCategory = true;
 let allHaveCategoryField = true;
+let allHaveCostField = true;
 const plantIds = new Set();
 const plantNames = new Set();
 let duplicatesFound = false;
@@ -91,16 +105,17 @@ for (const cat of plantsArray) {
     }
     plantIds.add(p.id);
     plantNames.add(p.name);
+    if (!p.cost || !p.price) {
+      allHaveCostField = false;
+    }
   }
 }
 
 assert(allHaveCategoryField, 'Each entry in plantsArray has a category field and plants array');
 assert(min6PerCategory, 'Every category has at least 6 distinct plants');
+assert(allHaveCostField, 'Every plant has both cost and price defined');
 assert(!duplicatesFound, 'Every plant has a unique ID and unique Name across categories');
 assert(allPlants.length >= 18, `Total distinct plants >= 18 (Found: ${allPlants.length})`);
-
-const productListContent = fs.readFileSync(path.join(projectRoot, 'src/ProductList.jsx'), 'utf-8');
-assert(productListContent.includes('plantsArray'), 'ProductList.jsx imports and references plantsArray');
 assert(productListContent.includes('product-list'), 'ProductList.jsx includes semantic section with class product-list');
 
 // 6. FIX 6: Verify ProductList.jsx addedToCart state and disabled logic
@@ -110,31 +125,42 @@ assert(productListContent.includes('setAddedToCart'), 'ProductList.jsx implement
 assert(productListContent.includes('disabled={addedToCart[plant.name]}'), 'ProductList button uses exact disabled condition: disabled={addedToCart[plant.name]}');
 assert(productListContent.includes("addedToCart[plant.name] ? 'Added to Cart' : 'Add to Cart'"), 'ProductList button label toggles between Added to Cart and Add to Cart based on addedToCart[plant.name]');
 
-// 7. FIX 7: Verify Navbar
-console.log('\n--- Checking FIX 7: Navbar Component & Navigation ---');
-const navbarContent = fs.readFileSync(path.join(projectRoot, 'src/components/Navbar.jsx'), 'utf-8');
-assert(navbarContent.includes('Home') && navbarContent.includes('Plants') && navbarContent.includes('Cart'), 'Navbar renders Home, Plants, and Cart links');
-assert(navbarContent.includes('cart-icon') && navbarContent.includes('cart-count'), 'Navbar includes cart-icon and cart-count classes');
-assert(navbarContent.includes('selectTotalQuantity'), 'Navbar uses selectTotalQuantity for dynamic aggregate count');
-assert(navbarContent.includes('handleHomeClick') && navbarContent.includes('handlePlantsClick') && navbarContent.includes('handleCartClick'), 'Navbar includes explicit navigation handlers');
+// 7. FIX 7: Verify Navbar defined in ProductList.jsx with handlers and dynamic count
+console.log('\n--- Checking FIX 7: Navbar Component & Navigation in ProductList.jsx ---');
+assert(productListContent.includes('export const Navbar =') || productListContent.includes('const Navbar ='), 'Navbar component is defined directly inside ProductList.jsx');
+assert(productListContent.includes('handleHomeClick'), 'ProductList Navbar implements handleHomeClick');
+assert(productListContent.includes('handlePlantsClick'), 'ProductList Navbar implements handlePlantsClick');
+assert(productListContent.includes('handleCartClick'), 'ProductList Navbar implements handleCartClick');
+assert(productListContent.includes('Home') && productListContent.includes('Plants') && productListContent.includes('Cart'), 'Navbar renders Home, Plants, and Cart links');
+assert(productListContent.includes('cart-icon') && productListContent.includes('cart-count'), 'Navbar includes cart-icon and cart-count classes');
+assert(productListContent.includes('selectTotalQuantity'), 'Navbar uses selectTotalQuantity for dynamic aggregate count');
 
-// 8. FIX 8, FIX 9, FIX 10: Redux CartSlice logic and CartItem handlers
-console.log('\n--- Checking FIX 8, 9, 10: CartSlice & CartItem Handlers ---');
-const cartSliceContent = fs.readFileSync(path.join(projectRoot, 'src/CartSlice.jsx'), 'utf-8');
-assert(cartSliceContent.includes('updateQuantity'), 'CartSlice exports updateQuantity action');
-assert(cartSliceContent.includes('removeItem'), 'CartSlice exports removeItem action');
-
+// 8. FIX 8, 9, 10: CartItem.jsx item.cost and rubric classes
+console.log('\n--- Checking FIX 8, 9, 10: CartItem.jsx item.cost & Rubric Classes ---');
 const cartItemContent = fs.readFileSync(path.join(projectRoot, 'src/CartItem.jsx'), 'utf-8');
+assert(cartItemContent.includes('{item.cost}'), 'CartItem.jsx renders unit price using {item.cost}');
+assert(cartItemContent.includes('cart-item-cost'), 'CartItem.jsx includes cart-item-cost class');
+assert(cartItemContent.includes('cart-item-name'), 'CartItem.jsx includes cart-item-name class');
+assert(cartItemContent.includes('cart-item-details'), 'CartItem.jsx includes cart-item-details class');
+assert(cartItemContent.includes('cart-item-image'), 'CartItem.jsx includes cart-item-image class');
+assert(cartItemContent.includes('cart-item-quantity'), 'CartItem.jsx includes cart-item-quantity class');
+assert(cartItemContent.includes('cart-item-button-dec'), 'CartItem.jsx includes cart-item-button-dec class');
+assert(cartItemContent.includes('cart-item-quantity-value'), 'CartItem.jsx includes cart-item-quantity-value class');
+assert(cartItemContent.includes('cart-item-button-inc'), 'CartItem.jsx includes cart-item-button-inc class');
+assert(cartItemContent.includes('cart-item-total'), 'CartItem.jsx includes cart-item-total class');
+assert(cartItemContent.includes('cart-item-delete'), 'CartItem.jsx includes cart-item-delete class for delete button');
+assert(cartItemContent.includes('continue_shopping_btn'), 'CartItem.jsx includes continue_shopping_btn class');
+assert(cartItemContent.includes('className="get-started-button') || cartItemContent.includes("get-started-button"), 'CartItem.jsx Continue Shopping button uses className get-started-button');
 assert(cartItemContent.includes('handleIncrement'), 'CartItem implements handleIncrement');
 assert(cartItemContent.includes('handleDecrement'), 'CartItem implements handleDecrement');
 assert(cartItemContent.includes('handleRemove'), 'CartItem implements handleRemove');
 assert(cartItemContent.includes('updateQuantity({') || cartItemContent.includes('updateQuantity('), 'CartItem dispatches updateQuantity');
 assert(cartItemContent.includes('removeItem(item.name)'), 'CartItem dispatches removeItem(item.name)');
-assert(cartItemContent.includes('cart-item-delete'), 'CartItem includes cart-item-delete class for delete button');
 assert(cartItemContent.includes('calculateTotalAmount'), 'CartItem implements calculateTotalAmount');
 assert(cartItemContent.includes('calculateTotalCost'), 'CartItem implements calculateTotalCost');
 
 // Test Redux Slice Runtime
+const cartSliceContent = fs.readFileSync(path.join(projectRoot, 'src/CartSlice.jsx'), 'utf-8');
 const tempCartSlicePath = path.join(projectRoot, 'scripts/_tempCartSlice.mjs');
 fs.writeFileSync(tempCartSlicePath, cartSliceContent, 'utf-8');
 
@@ -150,7 +176,7 @@ try {
 
   let state = { items: [] };
 
-  // 1. Add item
+  // 1. Add item with cost and price
   const p1 = allPlants[0];
   state = cartReducer(state, addToCart(p1));
   assert(state.items.length === 1 && state.items[0].quantity === 1, 'addToCart adds plant');
@@ -168,7 +194,7 @@ try {
   assert(state.items.length === 0, 'removeItem(item.name) cleanly deletes item from cart');
 
   // 5. Test updateQuantity at 0 removes item
-  state = cartReducer({ items: [{ name: 'Test', price: 100, quantity: 1 }] }, updateQuantity({ name: 'Test', quantity: 0 }));
+  state = cartReducer({ items: [{ name: 'Test', cost: '₹100', price: 100, quantity: 1 }] }, updateQuantity({ name: 'Test', quantity: 0 }));
   assert(state.items.length === 0, 'updateQuantity with quantity 0 removes item without leaving zero/negative values');
 
 } finally {

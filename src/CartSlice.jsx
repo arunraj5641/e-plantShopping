@@ -126,6 +126,12 @@ export const selectCartItems = (state) => state.cart?.items || [];
 export const selectTotalQuantity = (state) =>
   (state.cart?.items || []).reduce((total, item) => total + item.quantity, 0);
 export const selectTotalPrice = (state) =>
-  (state.cart?.items || []).reduce((total, item) => total + item.price * item.quantity, 0);
+  (state.cart?.items || []).reduce((total, item) => {
+    const costNum =
+      typeof item.cost === 'number'
+        ? item.cost
+        : parseFloat(String(item.cost || item.price || 0).replace(/[^0-9.]/g, '')) || 0;
+    return total + costNum * item.quantity;
+  }, 0);
 
 export default cartSlice.reducer;

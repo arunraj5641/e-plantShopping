@@ -8,22 +8,22 @@ const AboutUs = () => {
         About Paradise Nursery
       </h2>
       <p className="about-us-tagline">
-        Nurturing lives, purifying spaces, and bringing the soothing beauty of nature directly into your home.
+        Welcome to Paradise Nursery — Nurturing lives, purifying spaces, and bringing the soothing beauty of nature directly into your home.
       </p>
 
       <div className="about-us-body">
         <p>
-          At <strong>Paradise Nursery</strong>, we believe that every home and workspace deserves to breathe with life. Founded by passionate botanists and plant lovers, our mission is to make green living effortless, accessible, and delightful for everyone.
+          At <strong>Paradise Nursery</strong>, our mission is to make green living effortless, accessible, and delightful for everyone. We believe that every living room, office desk, and balcony deserves to breathe with natural life. Founded by passionate botanists and plant lovers, Paradise Nursery offers an exceptional range of vibrant, sustainably nurtured houseplants designed to purify indoor air, elevate mental well-being, and transform living spaces into flourishing sanctuaries.
         </p>
         <p>
-          From low-maintenance succulents and air-cleansing bio-filters to aromatic flowering varieties, every houseplant in our collection is carefully inspected, sustainably nurtured, and potted with love. We don&apos;t just sell plants; we help you curate living sanctuaries that elevate your mental well-being, boost creativity, and purify your indoor atmosphere.
+          Our services include careful organic cultivation, rigorous health inspections, sustainable eco-friendly potting, and secure doorstep packaging to ensure every plant arrives at your home thriving and ready to grow. From powerful air-purifying bio-filters and resilient low-maintenance succulents to aromatic floral varieties, we provide customized plant care advice and ongoing support for novice plant parents and seasoned indoor gardeners alike.
         </p>
         <p>
-          Whether you are taking your first steps as a plant parent or expanding an indoor jungle, our team is dedicated to guiding you with tailored care advice, healthy specimens, and eco-friendly practices. Join us on our journey to create greener, healthier, and happier living spaces—one plant at a time.
+          Whether you are looking to enhance your workspace productivity, cleanse household air toxins, or simply add a touch of tranquil elegance to your surroundings, Paradise Nursery is your trusted botanical partner in creating healthier, happier, and greener spaces.
         </p>
       </div>
 
-      {/* Core Value Highlights */}
+      {/* Core Value & Services Highlights */}
       <div className="about-highlights">
         <div className="highlight-item">
           <div className="highlight-icon" aria-hidden="true">🌱</div>
@@ -36,16 +36,16 @@ const AboutUs = () => {
         <div className="highlight-item">
           <div className="highlight-icon" aria-hidden="true">💨</div>
           <div className="highlight-text">
-            <h3>Natural Bio-Purifiers</h3>
-            <p>Proven varieties that filter airborne toxins and boost indoor oxygen.</p>
+            <h3>Air-Purifying Bio-Filters</h3>
+            <p>Scientifically proven varieties that cleanse indoor toxins and elevate oxygen.</p>
           </div>
         </div>
 
         <div className="highlight-item">
           <div className="highlight-icon" aria-hidden="true">💚</div>
           <div className="highlight-text">
-            <h3>Plant Care Guarantee</h3>
-            <p>Expert guidance and healthy-arrival guarantee for every botanical friend.</p>
+            <h3>Expert Plant Care & Guarantee</h3>
+            <p>Healthy plant arrival guarantee and lifetime guidance for every plant parent.</p>
           </div>
         </div>
       </div>

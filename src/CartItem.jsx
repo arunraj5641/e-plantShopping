@@ -25,13 +25,21 @@ const CartItem = ({ onContinueShopping }) => {
 
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
 
-  // Coursera Rubric compliant calculation helpers
-  const calculateTotalAmount = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  // Helper to parse numeric value from cost string (e.g., "₹499" or "$15") or numeric price
+  const parseCost = (cost) => {
+    if (typeof cost === 'number') return cost;
+    if (!cost) return 0;
+    return parseFloat(String(cost).replace(/[^0-9.]/g, '')) || 0;
   };
 
+  // Coursera Rubric compliant calculation helpers using rubric-required item.cost
   const calculateTotalCost = (item) => {
-    return item.price * item.quantity;
+    const unitCost = parseCost(item.cost || item.price);
+    return unitCost * item.quantity;
+  };
+
+  const calculateTotalAmount = () => {
+    return cartItems.reduce((total, item) => total + calculateTotalCost(item), 0);
   };
 
   // Coursera Task 7: handleIncrement dispatches updateQuantity
@@ -45,7 +53,7 @@ const CartItem = ({ onContinueShopping }) => {
     );
   };
 
-  // Coursera Task 7: handleDecrement dispatches updateQuantity; removing if quantity reaches 1
+  // Coursera Task 7: handleDecrement dispatches updateQuantity, removing if quantity reaches 1
   const handleDecrement = (item) => {
     if (item.quantity > 1) {
       dispatch(
@@ -69,7 +77,7 @@ const CartItem = ({ onContinueShopping }) => {
   const handleContinueShopping = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (onContinueShopping) {
-      onContinueShopping();
+      onContinueShopping(e);
     } else {
       navigate('/plants');
     }
@@ -84,12 +92,15 @@ const CartItem = ({ onContinueShopping }) => {
     <div className="cart-page-wrapper">
       <Navbar />
 
-      <main className="cart-container">
+      <main className="cart-container" aria-label="Shopping Cart">
         <div className="cart-header-section">
           <h1 className="cart-page-title">Your Plant Shopping Cart</h1>
           <p className="cart-page-subtitle">
             Review your selected houseplants, adjust quantities, or proceed to checkout.
           </p>
+          <h2 className="total_cart_amount" style={{ marginTop: '0.75rem', color: '#1b4332' }}>
+            Total Cart Amount: ₹{calculateTotalAmount().toLocaleString('en-IN')}
+          </h2>
         </div>
 
         {cartItems.length === 0 ? (
@@ -99,29 +110,31 @@ const CartItem = ({ onContinueShopping }) => {
             <p className="empty-cart-description">
               Looks like you haven&apos;t added any greenery to your cart yet. Discover our collection of air-purifying, low-maintenance, and flowering plants!
             </p>
-            <button
-              type="button"
-              className="btn-primary-action btn-browse-plants"
-              onClick={handleContinueShopping}
-              aria-label="Browse Plants"
-            >
-              <svg
-                className="button-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <div className="continue_shopping_btn">
+              <button
+                type="button"
+                className="get-started-button btn-primary-action btn-browse-plants"
+                onClick={handleContinueShopping}
+                aria-label="Browse Plants"
               >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-              <span>Explore Plants Catalog</span>
-            </button>
+                <svg
+                  className="button-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+                <span>Explore Plants Catalog</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="cart-layout-grid">
-            {/* List of Cart Items */}
+            {/* List of Cart Items using rubric-required class names */}
             <div className="cart-items-column" role="list" aria-label="Cart Items">
               <div className="cart-items-header">
                 <span className="items-count-badge">
@@ -132,110 +145,102 @@ const CartItem = ({ onContinueShopping }) => {
                 </span>
               </div>
 
-              {cartItems.map((item) => {
-                const itemTotal = calculateTotalCost(item);
+              {cartItems.map((item) => (
+                <div key={item.name || item.id} className="cart-item cart-item-card" role="listitem">
+                  <div className="cart-item-image-wrapper">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="cart-item-image"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = FALLBACK_PLANT_IMAGE;
+                      }}
+                    />
+                  </div>
 
-                return (
-                  <article key={item.id || item.name} className="cart-item-card" role="listitem">
-                    <div className="cart-item-image-wrapper">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="cart-item-image"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = FALLBACK_PLANT_IMAGE;
-                        }}
-                      />
+                  <div className="cart-item-details">
+                    <div className="cart-item-top">
+                      <div className="cart-item-info">
+                        <span className="cart-item-category">{item.category}</span>
+                        <div className="cart-item-name">{item.name}</div>
+                        {item.scientificName && (
+                          <span className="cart-item-scientific">{item.scientificName}</span>
+                        )}
+                      </div>
+
+                      {/* Delete Button with required cart-item-delete class */}
+                      <button
+                        type="button"
+                        className="cart-item-delete btn-delete-item"
+                        onClick={() => handleRemove(item)}
+                        aria-label={`Delete ${item.name} from cart`}
+                        title="Delete plant"
+                      >
+                        <svg
+                          className="trash-icon"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                          <line x1="10" y1="11" x2="10" y2="17" />
+                          <line x1="14" y1="11" x2="14" y2="17" />
+                        </svg>
+                        <span className="delete-text">Delete</span>
+                      </button>
                     </div>
 
-                    <div className="cart-item-details">
-                      <div className="cart-item-top">
-                        <div className="cart-item-info">
-                          <span className="cart-item-category">{item.category}</span>
-                          <h3 className="cart-item-name">{item.name}</h3>
-                          {item.scientificName && (
-                            <span className="cart-item-scientific">{item.scientificName}</span>
-                          )}
+                    <div className="cart-item-bottom">
+                      <div className="cart-price-info">
+                        <span className="unit-price-label">Unit Cost:</span>
+                        {/* Unit price displayed using rubric-required item.cost property */}
+                        <div className="cart-item-cost unit-price-value">
+                          {item.cost}
                         </div>
+                      </div>
 
-                        {/* Recognizable Delete Button with cart-item-delete class */}
+                      {/* Quantity Controls with rubric-required class names */}
+                      <div className="cart-item-quantity quantity-control-group" aria-label="Quantity Controls">
                         <button
                           type="button"
-                          className="cart-item-delete btn-delete-item"
-                          onClick={() => handleRemove(item)}
-                          aria-label={`Delete ${item.name} from cart`}
-                          title="Delete plant"
+                          className="cart-item-button cart-item-button-dec btn-qty"
+                          onClick={() => handleDecrement(item)}
+                          aria-label={`Decrease quantity for ${item.name}`}
                         >
-                          <svg
-                            className="trash-icon"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M3 6h18" />
-                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                            <line x1="10" y1="11" x2="10" y2="17" />
-                            <line x1="14" y1="11" x2="14" y2="17" />
-                          </svg>
-                          <span className="delete-text">Delete</span>
+                          -
+                        </button>
+
+                        <span className="cart-item-quantity-value qty-number" aria-live="polite">
+                          {item.quantity}
+                        </span>
+
+                        <button
+                          type="button"
+                          className="cart-item-button cart-item-button-inc btn-qty"
+                          onClick={() => handleIncrement(item)}
+                          aria-label={`Increase quantity for ${item.name}`}
+                        >
+                          +
                         </button>
                       </div>
 
-                      <div className="cart-item-bottom">
-                        <div className="cart-price-info">
-                          <span className="unit-price-label">Unit Price:</span>
-                          <span className="unit-price-value">
-                            ₹{item.price.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-
-                        {/* Quantity Controls */}
-                        <div className="quantity-control-group" aria-label="Quantity Controls">
-                          <button
-                            type="button"
-                            className="btn-qty btn-qty-decrement cart-item-button-dec"
-                            onClick={() => handleDecrement(item)}
-                            aria-label={`Decrease quantity for ${item.name}`}
-                          >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                          </button>
-
-                          <span className="qty-number" aria-live="polite">
-                            {item.quantity}
-                          </span>
-
-                          <button
-                            type="button"
-                            className="btn-qty btn-qty-increment cart-item-button-inc"
-                            onClick={() => handleIncrement(item)}
-                            aria-label={`Increase quantity for ${item.name}`}
-                          >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                              <line x1="12" y1="5" x2="12" y2="19" />
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                          </button>
-                        </div>
-
-                        {/* Plant Subtotal */}
-                        <div className="cart-subtotal-info">
-                          <span className="subtotal-label">Subtotal:</span>
-                          <span className="subtotal-value">
-                            ₹{itemTotal.toLocaleString('en-IN')}
-                          </span>
+                      {/* Subtotal with rubric-required cart-item-total class */}
+                      <div className="cart-subtotal-info">
+                        <span className="subtotal-label">Subtotal:</span>
+                        <div className="cart-item-total subtotal-value">
+                          ₹{calculateTotalCost(item).toLocaleString('en-IN')}
                         </div>
                       </div>
                     </div>
-                  </article>
-                );
-              })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Order Summary Sidebar */}
@@ -269,10 +274,11 @@ const CartItem = ({ onContinueShopping }) => {
 
                 <p className="summary-tax-note">Inclusive of all taxes & sustainable potting guarantee</p>
 
-                <div className="summary-actions">
+                {/* Rubric-required continue_shopping_btn and get-started-button classes */}
+                <div className="continue_shopping_btn summary-actions">
                   <button
                     type="button"
-                    className="btn-primary-action btn-checkout-action"
+                    className="get-started-button1 btn-primary-action btn-checkout-action"
                     onClick={handleCheckout}
                     aria-label="Proceed to Checkout"
                   >
@@ -293,8 +299,8 @@ const CartItem = ({ onContinueShopping }) => {
 
                   <button
                     type="button"
-                    className="btn-secondary-action btn-continue-shopping"
-                    onClick={handleContinueShopping}
+                    className="get-started-button btn-secondary-action btn-continue-shopping"
+                    onClick={(e) => handleContinueShopping(e)}
                     aria-label="Continue Shopping"
                   >
                     <svg

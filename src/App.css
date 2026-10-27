@@ -248,10 +248,12 @@ button:focus-visible, a:focus-visible {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-color: var(--color-primary-dark);
+  background-color: #12281e;
   min-height: 100vh;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 /* Botanical Background Image applied directly through App.css with gradient fallback */
@@ -1223,6 +1225,87 @@ button:focus-visible, a:focus-visible {
 
 .btn-continue-shopping {
   width: 100%;
+}
+
+/* Coursera Rubric Classes for CartItem */
+.cart-item-cost {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.cart-item-total {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+}
+
+.cart-item-delete {
+  color: var(--color-text-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.cart-item-delete:hover {
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
+.continue_shopping_btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.get-started-button {
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1.5px solid var(--color-primary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.get-started-button:hover {
+  background-color: var(--color-mint-light);
+  color: var(--color-primary-dark);
+}
+
+.get-started-button1 {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-white);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.25);
+  transition: all var(--transition-fast);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+
+.get-started-button1:hover {
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-forest));
+  box-shadow: 0 6px 16px rgba(27, 67, 50, 0.35);
+  transform: translateY(-2px);
 }
 
 .summary-trust-badges {
