@@ -308,6 +308,20 @@ button:focus-visible, a:focus-visible {
   max-width: 800px;
 }
 
+.landing-app-identity {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-sage);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(82, 183, 136, 0.4);
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 0.85rem;
+}
+
 .landing-title {
   font-family: var(--font-serif);
   font-size: 3.4rem;

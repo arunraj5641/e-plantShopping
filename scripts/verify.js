@@ -164,7 +164,10 @@ assert(appJsx.includes('/cart'), 'App.jsx defines /cart route');
 // 6. Verify README.md contents
 console.log('\n--- Checking README.md Content ---');
 const readme = fs.readFileSync(path.join(projectRoot, 'README.md'), 'utf-8');
-assert(readme.includes('# Paradise Nursery'), 'README includes project title');
+const firstLine = readme.trim().split('\n')[0].trim();
+assert(firstLine === '# e-plantShopping', `First Markdown heading in README.md is exactly '# e-plantShopping' (Found: "${firstLine}")`);
+assert(readme.includes('https://github.com/arunraj5641/e-plantShopping'), 'README includes links pointing to e-plantShopping repository');
+assert(!readme.includes('https://github.com/arunraj5641/paradise-nursery'), 'README contains no legacy paradise-nursery repository URLs');
 assert(readme.includes('Features'), 'README includes Features section');
 assert(readme.includes('Technology Stack'), 'README includes Tech Stack section');
 assert(readme.includes('Installation and Run Instructions'), 'README includes Installation instructions');

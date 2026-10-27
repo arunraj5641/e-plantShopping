@@ -1,6 +1,6 @@
-# Paradise Nursery 🌿
+# e-plantShopping
 
-Paradise Nursery is an online houseplant shopping cart web application designed to bring tranquility, nature, and clean air into every living and work space. Developed as the final capstone project for the Coursera React course, the application demonstrates modern React design patterns, centralized state management with Redux Toolkit, client-side routing with React Router, and an accessible, responsive botanical user interface.
+e-plantShopping is a responsive, feature-rich online plant shopping application featuring Paradise Nursery, designed to bring lush greenery, purified air, and natural botanical beauty into living and working spaces. Developed as the final capstone project for the Coursera React course, this web application demonstrates modern React architecture, client-side routing with React Router, centralized shopping cart state management with Redux Toolkit, and an accessible, responsive botanical user interface.
 
 ---
 
@@ -18,14 +18,14 @@ Paradise Nursery is an online houseplant shopping cart web application designed 
 
 ## Project Description
 
-Paradise Nursery provides a botanical shopping experience where plant enthusiasts can explore, learn about, and purchase a diverse selection of houseplants. The application features a rich botanical landing page with the company's story and mission, an organized catalog categorized into Air Purifying, Low Maintenance, and Aromatic varieties, and a functional shopping cart with live pricing, dynamic quantity adjustments, and Indian Rupee (₹) currency formatting.
+**e-plantShopping** delivers an intuitive e-commerce experience for houseplant enthusiasts. Customers can learn about the nursery's botanical mission, browse a categorized collection of 18 unique houseplants across three distinct categories (Air Purifying, Low Maintenance, and Aromatic & Flowering), add plants to their shopping cart with instant visual feedback, adjust item quantities with live subtotal calculations, and proceed through an interactive checkout workflow.
 
 ---
 
 ## Features
 
 - **Botanical Landing Page**:
-  - Full-screen botanical background imagery styled directly through CSS.
+  - Full-screen botanical background imagery styled directly through CSS (`App.css`).
   - Glassmorphic hero welcome card with brand mission and tagline.
   - Prominent **Get Started** button transitioning seamlessly into the plant catalog.
   - Integrated **About Us** section describing the nursery's organic ethos, bio-purifying benefits, and plant care guarantee.
@@ -88,7 +88,7 @@ The shopping cart is powered by **Redux Toolkit** (`src/CartSlice.jsx`) followin
 ## Project Structure
 
 ```text
-paradise-nursery/
+e-plantShopping/
 ├── README.md
 ├── package.json
 ├── vite.config.js
@@ -118,8 +118,8 @@ Ensure you have **Node.js** (v18 or higher) and **npm** installed on your machin
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/arunraj5641/paradise-nursery.git
-cd paradise-nursery
+git clone https://github.com/arunraj5641/e-plantShopping.git
+cd e-plantShopping
 ```
 
 ### 2. Install dependencies
@@ -149,10 +149,10 @@ npm run preview
 
 Below are the permanent GitHub file links for grading against the Coursera rubric:
 
-1. [README.md](https://github.com/arunraj5641/paradise-nursery/blob/main/README.md)
-2. [src/AboutUs.jsx](https://github.com/arunraj5641/paradise-nursery/blob/main/src/AboutUs.jsx)
-3. [src/App.css](https://github.com/arunraj5641/paradise-nursery/blob/main/src/App.css)
-4. [src/App.jsx](https://github.com/arunraj5641/paradise-nursery/blob/main/src/App.jsx)
-5. [src/CartSlice.jsx](https://github.com/arunraj5641/paradise-nursery/blob/main/src/CartSlice.jsx)
-6. [src/ProductList.jsx](https://github.com/arunraj5641/paradise-nursery/blob/main/src/ProductList.jsx)
-7. [src/CartItem.jsx](https://github.com/arunraj5641/paradise-nursery/blob/main/src/CartItem.jsx)
+1. [README.md](https://github.com/arunraj5641/e-plantShopping/blob/main/README.md)
+2. [src/AboutUs.jsx](https://github.com/arunraj5641/e-plantShopping/blob/main/src/AboutUs.jsx)
+3. [src/App.css](https://github.com/arunraj5641/e-plantShopping/blob/main/src/App.css)
+4. [src/App.jsx](https://github.com/arunraj5641/e-plantShopping/blob/main/src/App.jsx)
+5. [src/CartSlice.jsx](https://github.com/arunraj5641/e-plantShopping/blob/main/src/CartSlice.jsx)
+6. [src/ProductList.jsx](https://github.com/arunraj5641/e-plantShopping/blob/main/src/ProductList.jsx)
+7. [src/CartItem.jsx](https://github.com/arunraj5641/e-plantShopping/blob/main/src/CartItem.jsx)

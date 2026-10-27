@@ -21,12 +21,13 @@ const LandingPage = () => {
         <header className="landing-header">
           <div className="landing-brand-badge">
             <span className="brand-leaf-symbol" aria-hidden="true">🌿</span>
-            <span>Welcome to Nature&apos;s Sanctuary</span>
+            <span>e-plantShopping • Paradise Nursery</span>
           </div>
         </header>
 
         <section className="landing-hero-section">
           <div className="landing-hero-card">
+            <div className="landing-app-identity">e-plantShopping</div>
             <h1 className="landing-title">Paradise Nursery</h1>
             <p className="landing-tagline">
               Transforming your living and working spaces into flourishing, peaceful botanical sanctuaries.
